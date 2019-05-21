@@ -1,0 +1,49 @@
+{# DEBUG #}
+{#<code>#}
+{#    Current Value: {{ widget.link.data.value }}<br>#}
+{#    Complete Json: {{ widget.link.to_json }}<br>#}
+{#    Config Json: {{ widget.link.config_to_json }}<br><br>#}
+{#</code>#}
+
+{% if widget.allowed_types|length == 1 %}
+    <div style="display: none;">
+{% else %}
+    <div>
+{% endif %}
+Link-Typ:<br>
+{{ widget.other_fields.link_type }}<br><br>
+</div>
+
+{% if widget.allow_label %}
+    Link Label:<br>
+    {{ widget.other_fields.label }}<br><br>
+{% endif %}
+
+{% if widget.allow_target %}
+    {{ widget.other_fields.target }} in neuem Tab öffnen?<br><br>
+{% endif %}
+
+{% if widget.allow_no_follow %}
+    {{ widget.other_fields.no_follow }} no follow?<br><br>
+{% endif %}
+
+{% for identifier, type_field in widget.type_fields.items %}
+    {% if identifier in widget.allowed_types %}
+        <div class="linkit_{{ widget.name }}_{{ identifier }} linkit_{{ widget.name }}_typefield" style="display: none">
+            {{ type_field.instance.type_label }}: <br>
+            {{ type_field.markup }}<br><br>
+        </div>
+    {% endif %}
+{% endfor %}
+
+<script type="text/javascript">
+    django.jQuery(document).ready(function () {
+        django.jQuery(".linkit_{{ widget.name }}_" + django.jQuery("#id_{{ widget.name }}_link_type").val()).show()
+
+        django.jQuery("#id_{{ widget.name }}_link_type").change(function (element) {
+            django.jQuery(".linkit_{{ widget.name }}_typefield").hide()
+            django.jQuery(".linkit_{{ widget.name }}_" + django.jQuery("#id_{{ widget.name }}_link_type").val()).show()
+        });
+    });
+</script>
+
