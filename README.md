@@ -3,10 +3,12 @@
 LinkIt gives you a new field type `LinkField` to use on your models which allows you to effortlessly link to different models on your site. This could be a django-cms Page model,
 a filer File or anything custom like a News model.
 
+<img src="https://github.com/dreipol/linkit/raw/master/doc/linkit.gif"/>
+
 ## Installation 
 Install the latest version with pip and you're good to go.
 
-    $ pip install linkit
+    $ pip install LinkIt
 
 ## Usage    
 You're now able to use the new `LinkField` on any of your models:
