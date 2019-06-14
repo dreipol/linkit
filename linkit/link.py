@@ -42,6 +42,11 @@ class Link(object):
 
     @property
     def target(self):
+        from linkit.types import type_manager
+        link_type = type_manager.instance(self.data('type'), self)
+        if hasattr(link_type, 'target'):
+            return link_type.target
+
         if self.config('allow_target'):
             return self.data('target') or '_self'
 

@@ -3,10 +3,10 @@ from typing import Type, Optional
 from cms.forms.fields import PageSelectFormField
 from cms.models import Page
 from django.forms import CharField, ModelChoiceField
+from django.forms import Form
 from django.utils.translation import ugettext_lazy as _
 from filer.fields.file import AdminFileFormField
 from filer.models import File
-
 from linkit.link import Link
 from linkit.models import FakeLink
 
@@ -15,13 +15,18 @@ class LinkType(object):
     """ Base class for all possible link types. """
     identifier = None
     type_label = None
+    form_class = None
 
     def __init__(self, link: Link):
         self.link = link
 
     @classmethod
-    def post_attribute(cls) -> str:
-        return cls.identifier
+    def get_form(cls, link_name: str, data: dict = None, initial: bool = False) -> Form:
+        data = data or {}
+        if initial:
+            return cls.form_class(initial=data, prefix=f'{link_name}_link_{cls.identifier}')
+
+        return cls.form_class(data, prefix=f'{link_name}_link_{cls.identifier}')
 
     @property
     def value(self):
@@ -33,10 +38,6 @@ class LinkType(object):
             return self.link.data('value')
 
         return None
-
-    def real_value(self):
-        """ Returns the actual value selected. E.g. a Page or a FilerFile instance. """
-        raise NotImplementedError
 
     @property
     def href(self) -> Optional[str]:
@@ -56,8 +57,12 @@ class LinkType(object):
     def attrs(self) -> dict:
         return {'id': 'id_{}'.format(self.id)}
 
-    def render(self):
+    def real_value(self):
+        """ Returns the actual value selected. E.g. a Page or a FilerFile instance. """
         raise NotImplementedError
+
+    def render(self):
+        return self.get_form(self.link.name, self.link.data('value'), initial=True).as_p()
 
 
 class ModelLinkType(LinkType):
@@ -199,14 +204,6 @@ class LinkTypeManager(object):
             result[identifier] = type.type_label
 
         return list(result.items())
-
-    def post_parameters(self, field_name: str) -> dict:
-        """ Helper for the widget to tell it wat post attributes are relevant. """
-        parameters = {}
-        for identifier, type in self._types.items():
-            parameters[identifier] = '{}_link_{}'.format(field_name, type.post_attribute())
-
-        return parameters
 
 
 type_manager = LinkTypeManager()

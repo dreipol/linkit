@@ -30,7 +30,6 @@ Link-Typ:<br>
 {% for identifier, type_field in widget.type_fields.items %}
     {% if identifier in widget.allowed_types %}
         <div class="linkit_{{ widget.name }}_{{ identifier }} linkit_{{ widget.name }}_typefield" style="display: none">
-            {{ type_field.instance.type_label }}: <br>
             {{ type_field.markup }}<br><br>
         </div>
     {% endif %}

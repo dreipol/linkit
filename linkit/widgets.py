@@ -1,9 +1,9 @@
 from typing import Optional
 
 from cms.utils.urlutils import static_with_version
+from django.core.exceptions import ValidationError
 from django.forms import Widget, CharField, BooleanField, ChoiceField
 from django.forms.renderers import DjangoTemplates
-
 from linkit.link import Link
 from linkit.types import type_manager
 
@@ -17,31 +17,27 @@ class LinkWidget(Widget):
 
     def value_from_datadict(self, data, files, name) -> Link:
         """
-        Extract all possibly relevant info from the post and create a Link object.
+        Get the selected type and initialise the attached form.
         """
-        possible_values = {}
         link_data = {}
 
-        parameters = type_manager.post_parameters(name)
-        for identifier, parameter in parameters.items():
-            possible_values[identifier] = data.get(parameter, None)
+        type = type_manager.get(data.get(f'{name}_link_type', None))
+        form = type.get_form(name, data)
+        if not form.is_valid():
+            value = None
+        else:
+            value = form.cleaned_data
 
-        # For now those are hardcoded, maybe we can make them dynamic as well?
         link_data.update({
-            'type': data.get('{}_link_type'.format(name), None),
+            'type': type.identifier,
             'target': '_blank' if data.get('{}_link_target'.format(name), None) else None,
             'label': data.get('{}_link_label'.format(name), None),
             'no_follow': True if data.get('{}_link_no_follow'.format(name), None) else False,
-        })
-
-        # We need to avoid that value is '' if the link is optional and no value is set. It means
-        # that the post parameter will be en empty string instead of None.
-        value = possible_values.get(link_data.get('type'), None)
-        link_data.update({
-            'value': value or None
+            'value': value
         })
 
         return Link(config=self.config, data=link_data, name=name)
+
 
     @staticmethod
     def type_fields(link: Link) -> dict:
