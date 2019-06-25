@@ -3,7 +3,6 @@ from typing import Optional, Union
 
 from django.db import models
 
-from linkit.form_fields import LinkFormField
 from linkit.link import Link
 
 
@@ -11,9 +10,8 @@ class LinkField(models.Field):
     """
     Basically just a CharField which holds our values. The json holds the following properties:
     type: str       Matches type from config
-    value: str      Either page_id, filer_file_id, or id of custom model
+    value: dict     Value of the LinkType (could be a model_id, a string or multiple key/values
     label: str      Link label if allow_label from the config is True
-    model: str      Custom model like specified in types config (e.g News, Event, e.t.c)
     target: str     None or _blank
     no_follow: bool True or False
     """
@@ -31,6 +29,7 @@ class LinkField(models.Field):
         super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
+        from linkit.form_fields import LinkFormField
         defaults = {'form_class': LinkFormField, 'config': self.config, 'name': self.name}
         defaults.update(kwargs)
         return super().formfield(**defaults)
