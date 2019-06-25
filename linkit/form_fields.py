@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.forms import forms
 
 from linkit.link import Link
@@ -22,9 +21,14 @@ class LinkFormField(forms.Field):
 
     def clean(self, value: Link) -> Link:
         """
-        Validate given Link object. Currently we're only checking for required or not.
+        Validate given Link object. We do this by get a form instance of the link type and grab the
+        first error (if one) and raise it.
         """
-        if value.data('value') in self.empty_values and self.required:
-            raise ValidationError(self.error_messages['required'])
+        form = value.link_type.form()
+        if not form.is_valid():
+            for key, error in form.errors.as_data().items():
+                raise error[0]
+        else:
+            value._data['value'] = form.cleaned_data
 
         return value

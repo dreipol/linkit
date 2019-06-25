@@ -39,18 +39,20 @@ The `LinkField` takes some options which will define how the rendered widget loo
 - `allow_no_follow: bool = False` If set to true, the widget renders a checkbox so the editor can choose the `rel="nofollow"` for the link  
 
 ## Types
-Out of the Box LinkIt ships with three types: link, file, page. The `LinkType` base class makes it easy to implement your own link type, whatever
+Out of the Box LinkIt ships with three types: input, file, page. The `LinkType` base class makes it easy to implement your own link type, whatever
 it may be. If you want to link to another existing model in your app, e.g. News, all you need to do is register a new link type.
 
 1. Create a file `link_types.py` in any of your apps:
 
 ```python
-from linkit.types import ModelLinkType
+from linkit.types.model import ModelLinkType
+
 
 class NewsLinkType(ModelLinkType):
     identifier = 'news'
     type_label = 'News'
-    model = YourNewsModel
+    model = News
+
 ```
 
 2. Register the new type, preferably in a `AppConfig` `ready` method:
@@ -67,9 +69,40 @@ class ContentConfig(AppConfig):
         from contents.link_types import NewsLinkType
         from linkit.types import type_manager as linkit_manager
 
+
         linkit_manager.register(NewsLinkType)
 ````
 
 3. Profit! You can now create a field like this on any of your models: `link = LinkField(types=['news', 'page])` and link to any of your news or cms pages.
 
-Check `linkit/types.py` to see how the core types are implemented.
+Check `linkit/types` to see how the core types are implemented.
+
+### EmailType example
+Say we have a totally different new type we want to implement and can't just extend from the `ModelLinkType`. See the example bellow
+of a link type used to link to e-mail addresses with a optional subject field.
+
+````python
+class EmailTypeForm(TypeForm):
+    address = EmailField(label='E-Mail', required=True)
+    subject = CharField(label='Subject', required=False, max_length=20)
+
+
+class EmailType(LinkType):
+    identifier = 'email'
+    type_label = 'E-Mail'
+    form_class = EmailTypeForm
+
+    def real_value(self):
+        return self.link.data('value')
+
+    @property
+    def href(self) -> Optional[str]:
+        mail = self.real_value().get('address')
+        subject = self.real_value().get('subject', '')
+
+        return f'mailto:{mail}?subject={subject}'
+
+    @property
+    def label(self) -> Optional[str]:
+        return self.real_value().get('address')
+````

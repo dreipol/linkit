@@ -1,6 +1,8 @@
 import json
 from typing import Optional
 
+from linkit.types.manager import type_manager
+
 
 class Link(object):
     def __init__(self, config: dict, data: dict = None, name: str = None):
@@ -12,7 +14,6 @@ class Link(object):
             'type': data.get('type', None),
             'value': data.get('value', None),
             'label': data.get('label', None),
-            'model': data.get('model', None),
             'target': data.get('target', None),
             'no_follow': data.get('no_follow', None),
         }
@@ -30,18 +31,24 @@ class Link(object):
         return self._config.get(attribute, default)
 
     @property
+    def link_type(self):
+        """ Resolve the current type from the type_manager. Returns a LinkType. """
+        return type_manager.instance(self.data('type'), self)
+
+    @property
     def value(self):
-        """ Resolve the current type from the type_manager and get the real value of the link. """
-        from linkit.types import type_manager
-        return type_manager.instance(self.data('type'), self).real_value()
+        return self.link_type.real_value()
 
     @property
     def href(self):
-        from linkit.types import type_manager
-        return type_manager.instance(self.data('type'), self).href
+        return self.link_type.href
 
     @property
     def target(self):
+        link_type = self.link_type
+        if hasattr(link_type, 'target'):
+            return link_type.target
+
         if self.config('allow_target'):
             return self.data('target') or '_self'
 
@@ -59,7 +66,6 @@ class Link(object):
 
     @property
     def label(self) -> Optional[str]:
-        from linkit.types import type_manager
 
         if self.config('allow_label') and self.data('label'):
             return self.data('label')
@@ -67,7 +73,7 @@ class Link(object):
         return type_manager.instance(self.data('type'), self).label
 
     def to_json(self) -> str:
-        return json.dumps(self.data())
+        return json.dumps(self.data(), cls=type_manager.serializer)
 
     def config_to_json(self) -> str:
         """ Only used for debugging in the template. """
