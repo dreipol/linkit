@@ -6,7 +6,7 @@ a filer File or anything custom like a News model.
 <img src="https://github.com/dreipol/linkit/raw/master/doc/linkit.gif"/>
 
 ## Installation 
-Install the latest version with pip and you're good to go.
+Install the latest version with pip and add `linkit` to your `INSTALLED_APPS` - and you're good to go.
 
     $ pip install LinkIt
 
