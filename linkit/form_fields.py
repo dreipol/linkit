@@ -24,7 +24,7 @@ class LinkFormField(forms.Field):
         Validate given Link object. We do this by get a form instance of the link type and grab the
         first error (if one) and raise it.
         """
-        form = value.link_type.form()
+        form = value.link_type.form(required=self.required)
         if not form.is_valid():
             for key, error in form.errors.as_data().items():
                 raise error[0]

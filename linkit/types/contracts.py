@@ -12,7 +12,7 @@ class LinkType(object):
     def __init__(self, link):
         self.link = link
 
-    def form(self, link_name: str = None, data: dict = None, initial: bool = False) -> Form:
+    def form(self, link_name: str = None, data: dict = None, initial: bool = False, required: bool = True) -> Form:
         """
         Works also for LinkType types. So use this method directly if you only have type and use
         instance_form method if you have an actual instance.
@@ -20,10 +20,14 @@ class LinkType(object):
         data = data or self.link.data('value', {})
         link_name = link_name or self.link.name
 
-        if initial:
-            return self.form_class(initial=data, prefix=f'{link_name}_link_{self.identifier}', link_type=self)
+        kwargs = {'prefix': f'{link_name}_link_{self.identifier}', 'link_type': self, 'required': required}
 
-        return self.form_class(data=data, prefix=f'{link_name}_link_{self.identifier}', link_type=self)
+        if initial:
+            kwargs['initial'] = data
+        else:
+            kwargs['data'] = data
+
+        return self.form_class(**kwargs)
 
     @property
     def value(self):
@@ -59,6 +63,8 @@ class LinkType(object):
         raise NotImplementedError
 
     def render(self):
+        # We ignore the required parameter since in this case we're just rendering the form and
+        # won't do any validation.
         return self.form(initial=True).as_p()
 
 
@@ -67,4 +73,11 @@ class TypeForm(Form):
 
     def __init__(self, *args, **kwargs):
         self.link_type = kwargs.pop('link_type')
+
+        # Since we're nesting the printed markup of a form in a parent formfield (LinkFormField), we somehow
+        # need to pass the required state of that field down to our actual form.
+        self.parent_required = kwargs.pop('required')
         super().__init__(*args, **kwargs)
+
+        for index, field in self.fields.items():
+            field.required = self.parent_required
