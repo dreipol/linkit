@@ -8,4 +8,4 @@ class FakeLink(models.Model):
     a problem at all, but Failer needs a rel attribute which consists of a reverse relationship. We fake it
     with this model.
     """
-    fake_file = FilerFileField(blank=True, null=True)
+    fake_file = FilerFileField(blank=True, null=True, on_delete=models.CASCADE)
