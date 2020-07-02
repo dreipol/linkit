@@ -12,7 +12,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'LinkIt'
+NAME = 'linkit'
 DESCRIPTION = 'Painless link handling - be it a custom model, file or cms page'
 URL = 'https://github.com/dreipol/linkit'
 EMAIL = 'dev@dreipol.ch'
