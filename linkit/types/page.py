@@ -22,10 +22,7 @@ class PageType(LinkType):
     form_class = PageTypeForm
 
     def real_value(self) -> Optional[Page]:
-        if isinstance(self.link.data('value').get('page'), int):
-            return Page.objects.filter(pk=self.link.data('value').get('page')).first()
-        else:
-            return Page.objects.filter(pk=self.link.data('value').get('page').pk).first()
+        return Page.objects.filter(pk=self.link.data('value').get('page')).first()
 
     @property
     def href(self):
@@ -42,4 +39,3 @@ class PageType(LinkType):
             return real_value.get_title()
 
         return False
-

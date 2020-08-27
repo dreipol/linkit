@@ -19,10 +19,7 @@ class ModelLinkType(LinkType):
     form_class = ModelTypeForm
 
     def real_value(self):
-        if isinstance(self.link.data('value').get('model'), int):
-            return self.model.objects.filter(pk=self.link.data('value').get('model')).first()
-        else:
-            return self.model.objects.filter(pk=self.link.data('value').get('model').pk).first()
+        return self.model.objects.filter(pk=self.link.data('value').get('model')).first()
 
     @property
     def href(self):
