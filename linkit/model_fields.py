@@ -50,7 +50,7 @@ class LinkField(models.Field):
 
         return None
 
-    def from_db_value(self, value: Optional[str], expression, connection, context) -> Optional[Link]:
+    def from_db_value(self, value: Optional[str], expression, connection, context = None) -> Optional[Link]:
         """ Convert data stored in db to Link object. """
         return self._parse_link(value)
 
