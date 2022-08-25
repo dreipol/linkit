@@ -1,7 +1,7 @@
 from typing import Optional
 
 from django.forms import CharField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from linkit.types.contracts import LinkType, TypeForm
 

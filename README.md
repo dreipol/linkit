@@ -5,12 +5,12 @@ a filer File or anything custom like a News model.
 
 <img src="https://github.com/dreipol/linkit/raw/master/doc/linkit.gif"/>
 
-## Installation 
+## Installation
 Install the latest version with pip and add `linkit` to your `INSTALLED_APPS` - and you're good to go.
 
     $ pip install LinkIt
 
-## Usage    
+## Usage
 You're now able to use the new `LinkField` on any of your models:
 
 ```python
@@ -22,21 +22,21 @@ class Foo(Model):
     link = LinkField(types=['page', 'file', 'input'])  # <-- Yay!
 ```
 
-If you register this model in django admin you'll get a dropdown field where yru can choose between cms pages, filer files or just a plain input field. 
-Your model is now able to link to any of these entities with one single field.  
+If you register this model in django admin you'll get a dropdown field where yru can choose between cms pages, filer files or just a plain input field.
+Your model is now able to link to any of these entities with one single field.
 
 In a template you could use this link field like this:
 ````html
 <a href="{{ instance.link.href }}" target="{{ instance.link.target }}">{{ instance.link.label }}</a>
 ````
-    
+
 ## Configuration
 The `LinkField` takes some options which will define how the rendered widget looks and what options the content editor has:
 
-- `types: list = None` Defines which link types are allowed (see more bellow in the section «Types») 
-- `allow_target: bool = False` If set to true, the widget renders a checkbox so the editor can choose the `_target` of the link  
+- `types: list = None` Defines which link types are allowed (see more bellow in the section «Types»)
+- `allow_target: bool = False` If set to true, the widget renders a checkbox so the editor can choose the `_target` of the link
 - `allow_label: bool = True` Renders an additonal input field so a custom label can be set
-- `allow_no_follow: bool = False` If set to true, the widget renders a checkbox so the editor can choose the `rel="nofollow"` for the link  
+- `allow_no_follow: bool = False` If set to true, the widget renders a checkbox so the editor can choose the `rel="nofollow"` for the link
 
 ## Types
 Out of the Box LinkIt ships with three types: input, file, page. The `LinkType` base class makes it easy to implement your own link type, whatever
@@ -59,7 +59,7 @@ class NewsLinkType(ModelLinkType):
 
 ````python
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class ContentConfig(AppConfig):
