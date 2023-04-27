@@ -38,8 +38,14 @@ class LinkWidget(Widget):
         types = {}
         for link_type in link.config('types'):
             instance = type_manager.instance(link_type, link)
+            try:
+                markup = instance.render()
+            except Exception:
+                # Reset link value if target is no longer available
+                instance.link._data['value'] = {}
+                markup = instance.render()
             types[link_type] = {
-                'markup': instance.render(),
+                'markup': markup,
                 'instance': instance,
             }
 
