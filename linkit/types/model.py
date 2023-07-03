@@ -1,5 +1,5 @@
 from django.forms import ModelChoiceField
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from linkit.types.contracts import TypeForm, LinkType
 
@@ -9,7 +9,7 @@ class ModelTypeForm(TypeForm):
         """ Set the queryset and label dynamically based on the properties defined on the link type. """
         super().__init__(*args, **kwargs)
         self.fields['model'].queryset = self.link_type.queryset()
-        self.fields['model'].label = force_text(self.link_type.model._meta.verbose_name)
+        self.fields['model'].label = force_str(self.link_type.model._meta.verbose_name)
 
     model = ModelChoiceField(queryset=None)
 
