@@ -115,7 +115,10 @@ class LinkWidget(Widget):
         """
         css = {
             'all': [
+                'filer/css/admin_filer.cms.icons.css',
                 'filer/css/admin_filer.css',
+                'filer/css/admin_filer.fa.icons.css',
+                'filer/css/admin_folderpermissions.css'
             ]
         }
         js = (

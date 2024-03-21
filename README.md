@@ -22,7 +22,7 @@ class Foo(Model):
     link = LinkField(types=['page', 'file', 'input'])  # <-- Yay!
 ```
 
-If you register this model in django admin you'll get a dropdown field where yru can choose between cms pages, filer files or just a plain input field. 
+If you register this model in django admin you'll get a dropdown field where you can choose between cms pages, filer files or just a plain input field. 
 Your model is now able to link to any of these entities with one single field.  
 
 In a template you could use this link field like this:
@@ -55,7 +55,7 @@ class NewsLinkType(ModelLinkType):
 
 ```
 
-2. Register the new type, preferably in a `AppConfig` `ready` method:
+2. Register the new type, preferably in an `AppConfig` `ready` method:
 
 ````python
 from django.apps import AppConfig
@@ -79,7 +79,7 @@ Check `linkit/types` to see how the core types are implemented.
 
 ### EmailType example
 Say we have a totally different new type we want to implement and can't just extend from the `ModelLinkType`. See the example bellow
-of a link type used to link to e-mail addresses with a optional subject field.
+of a link type used to link to e-mail addresses with an optional subject field.
 
 ````python
 class EmailTypeForm(TypeForm):
