@@ -18,11 +18,14 @@ class PageTypeForm(TypeForm):
 
 class PageType(LinkType):
     identifier = 'page'
-    type_label = _('CMS Seite')
+    type_label = _('CMS Page')
     form_class = PageTypeForm
 
     def real_value(self) -> Optional[Page]:
-        return Page.objects.filter(pk=self.link.data('value').get('page')).first()
+        if isinstance(self.link.data('value').get('page'), int):
+            return Page.objects.filter(pk=self.link.data('value').get('page')).first()
+        else:
+            return Page.objects.filter(pk=self.link.data('value').get('page').pk).first()
 
     @property
     def href(self):
