@@ -4,7 +4,6 @@ from typing import Optional
 from cms.forms.fields import PageSelectFormField
 from cms.models import Page
 from django.utils.translation import gettext_lazy as _
-from pkg_resources import parse_version
 
 from linkit.types.contracts import LinkType, TypeForm
 
@@ -19,7 +18,7 @@ class PageTypeForm(TypeForm):
         """ Set the queryset and label dynamically based on the properties defined on the link type. """
         super().__init__(*args, **kwargs)
         self.fields['page'].to_field_name = self.link_type.id
-        if cms_version and parse_version(cms_version) >= parse_version("4.0.0"):
+        if cms_version and cms_version >= "4.0.0":
             queryset = Page.objects.all()
         else:
             queryset = Page.objects.drafts()
