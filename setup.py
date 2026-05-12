@@ -20,7 +20,11 @@ AUTHOR = 'dreipol'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = None
 
-REQUIRED = []
+REQUIRED = [
+    'django>=2.2',
+    'django-cms>=3.5',
+    'packaging>=21.0',
+]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
