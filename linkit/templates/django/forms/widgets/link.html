@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {# DEBUG #}
 {#<code>#}
 {#    Current Value: {{ widget.link.data.value }}<br>#}
@@ -5,35 +7,45 @@
 {#    Config Json: {{ widget.link.config_to_json }}<br><br>#}
 {#</code>#}
 
-{% if widget.allowed_types|length == 1 %}
-    <div style="display: none;">
-{% else %}
-    <div>
-{% endif %}
-Link-Typ:<br>
-{{ widget.other_fields.link_type }}<br><br>
+<div class="form-row"
+     {% if widget.allowed_types|length == 1 %}style="display: none;"{% endif %}
+>
+    {{ widget.other_fields.link_type }}
 </div>
-
-{% if widget.allow_label %}
-    Link Label:<br>
-    {{ widget.other_fields.label }}<br><br>
-{% endif %}
-
-{% if widget.allow_target %}
-    {{ widget.other_fields.target }} in neuem Tab öffnen?<br><br>
-{% endif %}
-
-{% if widget.allow_no_follow %}
-    {{ widget.other_fields.no_follow }} no follow?<br><br>
-{% endif %}
 
 {% for identifier, type_field in widget.type_fields.items %}
     {% if identifier in widget.allowed_types %}
         <div class="linkit_{{ widget.name }}_{{ identifier }} linkit_{{ widget.name }}_typefield" style="display: none">
-            {{ type_field.markup }}<br><br>
+            {{ type_field.markup }}<br>
         </div>
     {% endif %}
 {% endfor %}
+
+{% if widget.allow_label %}
+    <div class="form-row">
+        <label>{% trans "Label" %}:</label>
+        {{ widget.other_fields.label }}
+        <div class="help">{% trans "If ommited the object title will be used, eg page title." %}</div>
+    </div>
+{% endif %}
+
+{% if widget.allow_no_follow %}
+    <div class="form-row">
+        <div class="checkbox-row">
+            {{ widget.other_fields.target }}
+            <label class="vCheckboxLabel" for="id_link_link_target">{% trans "Open link in a new window" %}</label>
+        </div>
+    </div>
+{% endif %}
+
+{% if widget.allow_no_follow %}
+    <div class="form-row">
+        <div class="checkbox-row">
+            {{ widget.other_fields.no_follow }}
+            <label class="vCheckboxLabel" for="id_link_link_no_follow">{% trans "Add 'nofollow' attribute" %}</label>
+        </div>
+    </div>
+{% endif %}
 
 <script type="text/javascript">
     django.jQuery(document).ready(function () {
@@ -45,4 +57,3 @@ Link-Typ:<br>
         });
     });
 </script>
-
